@@ -15,7 +15,7 @@
 body {
   margin: 0;
   background: #080808;
-  color: white;
+  color: #fff;
   font-family: Arial, sans-serif;
 }
 
@@ -72,11 +72,13 @@ audio {
   display: none;
 }
 
+/* CONTROLES DO PLAYER */
+
 .controls {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   margin: 30px auto;
   width: 100%;
 }
@@ -111,31 +113,38 @@ audio {
   font-size: 30px !important;
 }
 
+/* MENU DOS TRES PONTINHOS */
+
 .menu {
   display: none;
   position: absolute;
   top: 48px;
   right: 0;
-  width: 235px;
-  padding: 7px;
+  width: 240px;
+  padding: 8px;
   background: #202020;
-  border: 1px solid #383838;
+  border: 1px solid #444;
   border-radius: 12px;
-  z-index: 20;
-  text-align: left;
+  z-index: 100;
   box-shadow: 0 8px 25px #0009;
 }
 
 .menu.show {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
+
+/* CADA OPCAO EM UMA LINHA */
 
 .menu-item {
   display: block;
+  flex: none;
   width: 100%;
   min-height: 48px;
   padding: 14px 12px;
-  border: none;
+  margin: 0;
+  border: 0;
   border-radius: 7px;
   background: transparent;
   color: white;
@@ -148,11 +157,14 @@ audio {
 }
 
 .menu-item:active {
-  background: #333;
+  background: #383838;
 }
+
+/* OPCOES DO TEMPORIZADOR */
 
 .timer-options {
   display: none;
+  width: 100%;
   border-top: 1px solid #444;
   margin-top: 5px;
   padding-top: 5px;
@@ -165,7 +177,8 @@ audio {
 .timer-options button {
   display: block;
   width: 100%;
-  padding: 12px;
+  min-height: 40px;
+  padding: 10px 12px;
   border: none;
   background: transparent;
   color: #19d66b;
@@ -173,6 +186,8 @@ audio {
   font-size: 14px;
   cursor: pointer;
 }
+
+/* BIBLIOTECA */
 
 .add-button {
   width: 100%;
@@ -330,6 +345,8 @@ let queue = [];
 let currentIndex = -1;
 let timer = null;
 
+// ADICIONAR MUSICAS
+
 document.getElementById("addButton").addEventListener("click", () => {
   fileInput.click();
 });
@@ -354,6 +371,8 @@ fileInput.addEventListener("change", () => {
 
   fileInput.value = "";
 });
+
+// MOSTRAR BIBLIOTECA
 
 function renderPlaylist() {
   playlist.innerHTML = "";
@@ -380,6 +399,8 @@ function renderPlaylist() {
   });
 }
 
+// REPRODUZIR MUSICA
+
 function playSong(index) {
   if (index < 0 || index >= songs.length) return;
 
@@ -397,6 +418,8 @@ function playSong(index) {
   });
 }
 
+// PROXIMA MUSICA
+
 function playNext() {
   if (queue.length > 0) {
     const nextIndex = queue.shift();
@@ -412,6 +435,8 @@ function playNext() {
     playSong(nextIndex);
   }
 }
+
+// PLAY E PAUSA
 
 playBtn.addEventListener("click", () => {
   if (songs.length === 0) {
@@ -439,7 +464,11 @@ audio.addEventListener("pause", () => {
   playBtn.textContent = "▶";
 });
 
+// AVANCAR
+
 nextBtn.addEventListener("click", playNext);
+
+// VOLTAR
 
 previousBtn.addEventListener("click", () => {
   if (songs.length === 0) return;
@@ -456,20 +485,26 @@ previousBtn.addEventListener("click", () => {
   playSong(previousIndex);
 });
 
+// AO TERMINAR A MUSICA
+
 audio.addEventListener("ended", playNext);
+
+// MUTE
 
 muteBtn.addEventListener("click", () => {
   audio.muted = !audio.muted;
   muteBtn.textContent = audio.muted ? "🔇" : "🔊";
 });
 
-// Abrir e fechar os três pontinhos
+// ABRIR MENU
+
 menuBtn.addEventListener("click", (event) => {
   event.stopPropagation();
   menu.classList.toggle("show");
 });
 
-// Fechar menu ao tocar fora dele
+// FECHAR MENU AO CLICAR FORA
+
 document.addEventListener("click", (event) => {
   if (!event.target.closest(".menu-area")) {
     menu.classList.remove("show");
@@ -477,25 +512,29 @@ document.addEventListener("click", (event) => {
   }
 });
 
-// Tocar a seguir
+// TOCAR A SEGUIR
+
 playNextBtn.addEventListener("click", () => {
   if (currentIndex === -1) {
     status.textContent = "Escolha uma música primeiro.";
   } else {
-    queue.push(currentIndex);
-    status.textContent = "Música adicionada para tocar a seguir!";
+    const nextIndex = (currentIndex + 1) % songs.length;
+    queue.push(nextIndex);
+    status.textContent = "Próxima música adicionada à fila!";
   }
 
   menu.classList.remove("show");
   timerOptions.classList.remove("show");
 });
 
-// Abrir temporizador
+// ABRIR TEMPORIZADOR
+
 timerBtn.addEventListener("click", () => {
   timerOptions.classList.toggle("show");
 });
 
-// Opções do temporizador
+// CONFIGURAR TEMPORIZADOR
+
 timerOptions.querySelectorAll("button").forEach(button => {
   button.addEventListener("click", () => {
     clearTimeout(timer);
