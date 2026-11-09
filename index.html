@@ -15,7 +15,7 @@
 body {
   margin: 0;
   background: #080808;
-  color: #fff;
+  color: white;
   font-family: Arial, sans-serif;
 }
 
@@ -113,38 +113,39 @@ audio {
   font-size: 30px !important;
 }
 
-/* MENU DOS TRES PONTINHOS */
+/* MENUS */
 
-.menu {
+.popup-menu {
   display: none;
   position: absolute;
-  top: 48px;
-  right: 0;
-  width: 240px;
-  padding: 8px;
   background: #202020;
   border: 1px solid #444;
   border-radius: 12px;
+  padding: 7px;
   z-index: 100;
   box-shadow: 0 8px 25px #0009;
 }
 
-.menu.show {
+.popup-menu.show {
   display: flex;
   flex-direction: column;
   align-items: stretch;
 }
 
-/* CADA OPCAO EM UMA LINHA */
+.main-menu {
+  top: 48px;
+  right: 0;
+  width: 220px;
+}
 
-.menu-item {
+.popup-option {
   display: block;
   flex: none;
   width: 100%;
-  min-height: 48px;
-  padding: 14px 12px;
+  min-height: 45px;
+  padding: 13px 12px;
   margin: 0;
-  border: 0;
+  border: none;
   border-radius: 7px;
   background: transparent;
   color: white;
@@ -156,11 +157,11 @@ audio {
   cursor: pointer;
 }
 
-.menu-item:active {
+.popup-option:active {
   background: #383838;
 }
 
-/* OPCOES DO TEMPORIZADOR */
+/* TEMPORIZADOR */
 
 .timer-options {
   display: none;
@@ -187,7 +188,7 @@ audio {
   cursor: pointer;
 }
 
-/* BIBLIOTECA */
+/* ADICIONAR MUSICAS */
 
 .add-button {
   width: 100%;
@@ -214,31 +215,79 @@ h3 {
   margin-top: 38px;
 }
 
+/* LISTA DE MUSICAS */
+
 #playlist {
   list-style: none;
   padding: 0;
+  margin: 0;
   text-align: left;
 }
 
-#playlist li {
+.track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   background: #151515;
   border: 1px solid #292929;
   border-radius: 9px;
-  padding: 15px;
+  padding: 10px 8px 10px 14px;
   margin-bottom: 9px;
+}
+
+.track.active {
+  border-color: #19d66b;
+}
+
+.track-name {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 0;
+  color: white;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 14px;
   overflow-wrap: anywhere;
   cursor: pointer;
 }
 
-#playlist li.active {
-  border-color: #19d66b;
+.track.active .track-name {
   color: #19d66b;
+}
+
+.track-menu-area {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.track-menu-button {
+  width: 38px;
+  height: 38px;
+  background: transparent;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.track-menu {
+  right: 0;
+  top: 40px;
+  width: 190px;
+}
+
+.delete-option {
+  color: #ff5555;
 }
 
 .empty {
   color: #777;
   font-size: 13px;
-  cursor: default !important;
+  padding: 12px 0;
 }
 </style>
 </head>
@@ -271,19 +320,17 @@ h3 {
 
     <button id="muteBtn" title="Silenciar">🔊</button>
 
+    <!-- MENU PRINCIPAL: SOMENTE TEMPORIZADOR -->
+
     <div class="menu-area">
 
       <button id="menuBtn" class="menu-button" title="Mais opções">
         ⋮
       </button>
 
-      <div class="menu" id="menu">
+      <div class="popup-menu main-menu" id="mainMenu">
 
-        <button class="menu-item" id="playNextBtn">
-          ▶ Tocar a seguir
-        </button>
-
-        <button class="menu-item" id="timerBtn">
+        <button class="popup-option" id="timerBtn">
           ⏰ Temporizador
         </button>
 
@@ -335,14 +382,14 @@ const songInfo = document.getElementById("songInfo");
 const status = document.getElementById("status");
 
 const menuBtn = document.getElementById("menuBtn");
-const menu = document.getElementById("menu");
-const playNextBtn = document.getElementById("playNextBtn");
+const mainMenu = document.getElementById("mainMenu");
 const timerBtn = document.getElementById("timerBtn");
 const timerOptions = document.getElementById("timerOptions");
 
 let songs = [];
 let queue = [];
-let currentIndex = -1;
+let currentSongId = null;
+let nextSongId = 1;
 let timer = null;
 
 // ADICIONAR MUSICAS
@@ -358,6 +405,7 @@ fileInput.addEventListener("change", () => {
     if (!file.type.startsWith("audio/")) return;
 
     songs.push({
+      id: nextSongId++,
       name: file.name.replace(/\.[^/.]+$/, ""),
       url: URL.createObjectURL(file)
     });
@@ -372,6 +420,12 @@ fileInput.addEventListener("change", () => {
   fileInput.value = "";
 });
 
+// ENCONTRAR MUSICA PELO ID
+
+function findSong(id) {
+  return songs.find(song => song.id === id);
+}
+
 // MOSTRAR BIBLIOTECA
 
 function renderPlaylist() {
@@ -383,17 +437,78 @@ function renderPlaylist() {
     return;
   }
 
-  songs.forEach((song, index) => {
+  songs.forEach(song => {
     const li = document.createElement("li");
-    li.textContent = song.name;
+    li.className = "track";
 
-    if (index === currentIndex) {
+    if (song.id === currentSongId) {
       li.classList.add("active");
     }
 
-    li.addEventListener("click", () => {
-      playSong(index);
+    const name = document.createElement("button");
+    name.className = "track-name";
+    name.textContent = song.name;
+
+    name.addEventListener("click", () => {
+      playSong(song.id);
+      closeAllMenus();
     });
+
+    // TRES PONTINHOS DE CADA MUSICA
+
+    const menuArea = document.createElement("div");
+    menuArea.className = "track-menu-area";
+
+    const dots = document.createElement("button");
+    dots.className = "track-menu-button";
+    dots.textContent = "⋮";
+    dots.title = "Opções da música";
+
+    const trackMenu = document.createElement("div");
+    trackMenu.className = "popup-menu track-menu";
+
+    const playNextOption = document.createElement("button");
+    playNextOption.className = "popup-option";
+    playNextOption.textContent = "▶ Tocar a seguir";
+
+    playNextOption.addEventListener("click", () => {
+      queue.push(song.id);
+
+      status.textContent =
+        "Música adicionada para tocar a seguir!";
+
+      closeAllMenus();
+    });
+
+    const deleteOption = document.createElement("button");
+    deleteOption.className = "popup-option delete-option";
+    deleteOption.textContent = "🗑 Excluir";
+
+    deleteOption.addEventListener("click", () => {
+      deleteSong(song.id);
+      closeAllMenus();
+    });
+
+    dots.addEventListener("click", (event) => {
+      event.stopPropagation();
+
+      const wasOpen = trackMenu.classList.contains("show");
+
+      closeAllMenus();
+
+      if (!wasOpen) {
+        trackMenu.classList.add("show");
+      }
+    });
+
+    trackMenu.appendChild(playNextOption);
+    trackMenu.appendChild(deleteOption);
+
+    menuArea.appendChild(dots);
+    menuArea.appendChild(trackMenu);
+
+    li.appendChild(name);
+    li.appendChild(menuArea);
 
     playlist.appendChild(li);
   });
@@ -401,13 +516,15 @@ function renderPlaylist() {
 
 // REPRODUZIR MUSICA
 
-function playSong(index) {
-  if (index < 0 || index >= songs.length) return;
+function playSong(id) {
+  const song = findSong(id);
 
-  currentIndex = index;
-  audio.src = songs[index].url;
+  if (!song) return;
 
-  songName.textContent = songs[index].name;
+  currentSongId = id;
+  audio.src = song.url;
+
+  songName.textContent = song.name;
   songInfo.textContent = "Biblioteca do celular";
 
   renderPlaylist();
@@ -418,22 +535,29 @@ function playSong(index) {
   });
 }
 
-// PROXIMA MUSICA
+// TOCAR PROXIMA MUSICA
 
 function playNext() {
-  if (queue.length > 0) {
-    const nextIndex = queue.shift();
-    playSong(nextIndex);
-    return;
+  while (queue.length > 0) {
+    const nextId = queue.shift();
+
+    if (findSong(nextId)) {
+      playSong(nextId);
+      return;
+    }
   }
 
-  if (songs.length > 0) {
-    const nextIndex = currentIndex === -1
-      ? 0
-      : (currentIndex + 1) % songs.length;
+  if (songs.length === 0) return;
 
-    playSong(nextIndex);
-  }
+  const currentIndex = songs.findIndex(
+    song => song.id === currentSongId
+  );
+
+  const nextIndex = currentIndex === -1
+    ? 0
+    : (currentIndex + 1) % songs.length;
+
+  playSong(songs[nextIndex].id);
 }
 
 // PLAY E PAUSA
@@ -444,8 +568,8 @@ playBtn.addEventListener("click", () => {
     return;
   }
 
-  if (currentIndex === -1) {
-    playSong(0);
+  if (currentSongId === null) {
+    playSong(songs[0].id);
   } else if (audio.paused) {
     audio.play().catch(() => {
       status.textContent = "Não foi possível reproduzir.";
@@ -478,11 +602,15 @@ previousBtn.addEventListener("click", () => {
     return;
   }
 
+  const currentIndex = songs.findIndex(
+    song => song.id === currentSongId
+  );
+
   const previousIndex = currentIndex <= 0
     ? songs.length - 1
     : currentIndex - 1;
 
-  playSong(previousIndex);
+  playSong(songs[previousIndex].id);
 });
 
 // AO TERMINAR A MUSICA
@@ -496,44 +624,37 @@ muteBtn.addEventListener("click", () => {
   muteBtn.textContent = audio.muted ? "🔇" : "🔊";
 });
 
-// ABRIR MENU
+// FECHAR TODOS OS MENUS
+
+function closeAllMenus() {
+  mainMenu.classList.remove("show");
+  timerOptions.classList.remove("show");
+
+  document.querySelectorAll(".track-menu.show").forEach(menu => {
+    menu.classList.remove("show");
+  });
+}
+
+// MENU PRINCIPAL
 
 menuBtn.addEventListener("click", (event) => {
   event.stopPropagation();
-  menu.classList.toggle("show");
-});
 
-// FECHAR MENU AO CLICAR FORA
+  const wasOpen = mainMenu.classList.contains("show");
 
-document.addEventListener("click", (event) => {
-  if (!event.target.closest(".menu-area")) {
-    menu.classList.remove("show");
-    timerOptions.classList.remove("show");
+  closeAllMenus();
+
+  if (!wasOpen) {
+    mainMenu.classList.add("show");
   }
 });
 
-// TOCAR A SEGUIR
+// TEMPORIZADOR
 
-playNextBtn.addEventListener("click", () => {
-  if (currentIndex === -1) {
-    status.textContent = "Escolha uma música primeiro.";
-  } else {
-    const nextIndex = (currentIndex + 1) % songs.length;
-    queue.push(nextIndex);
-    status.textContent = "Próxima música adicionada à fila!";
-  }
-
-  menu.classList.remove("show");
-  timerOptions.classList.remove("show");
-});
-
-// ABRIR TEMPORIZADOR
-
-timerBtn.addEventListener("click", () => {
+timerBtn.addEventListener("click", (event) => {
+  event.stopPropagation();
   timerOptions.classList.toggle("show");
 });
-
-// CONFIGURAR TEMPORIZADOR
 
 timerOptions.querySelectorAll("button").forEach(button => {
   button.addEventListener("click", () => {
@@ -558,10 +679,53 @@ timerOptions.querySelectorAll("button").forEach(button => {
       }, minutes * 60 * 1000);
     }
 
-    menu.classList.remove("show");
-    timerOptions.classList.remove("show");
+    closeAllMenus();
   });
 });
+
+// EXCLUIR MUSICA
+
+function deleteSong(id) {
+  const index = songs.findIndex(song => song.id === id);
+
+  if (index === -1) return;
+
+  const song = songs[index];
+
+  // Retirar da fila
+  queue = queue.filter(queuedId => queuedId !== id);
+
+  // Se for a música atual, parar a reprodução
+  if (currentSongId === id) {
+    audio.pause();
+    audio.removeAttribute("src");
+    audio.load();
+
+    currentSongId = null;
+
+    songName.textContent = "Nenhuma música selecionada";
+    songInfo.textContent = "Adicione músicas do seu celular";
+  }
+
+  URL.revokeObjectURL(song.url);
+
+  songs.splice(index, 1);
+
+  renderPlaylist();
+
+  status.textContent = "Música excluída da biblioteca.";
+}
+
+// FECHAR MENU AO CLICAR FORA
+
+document.addEventListener("click", (event) => {
+  if (!event.target.closest(".menu-area") &&
+      !event.target.closest(".track-menu-area")) {
+    closeAllMenus();
+  }
+});
+
+// INICIAR
 
 renderPlaylist();
 </script>
