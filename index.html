@@ -101,7 +101,58 @@ button:active {
   transform: scale(.97);
 }
 
-.add-button {
+.add-button
+  .controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 25px 0;
+}
+
+.controls button {
+  width: 48px;
+  height: 48px;
+  padding: 8px;
+  border-radius: 50%;
+  font-size: 20px;
+}
+
+#playBtn {
+  width: 60px;
+  height: 60px;
+  background: #00c853;
+  font-size: 25px;
+}
+
+#previousBtn,
+#nextBtn,
+#muteBtn {
+  background: #292929;
+  color: white;
+}
+
+.timer {
+  margin-top: 25px;
+  padding: 15px;
+  background: #202020;
+  border-radius: 12px;
+}
+
+.timer h3 {
+  font-size: 15px;
+  margin-top: 0;
+}
+
+.timer select {
+  width: 100%;
+  padding: 12px;
+  background: #111;
+  color: white;
+  border: 1px solid #00c853;
+  border-radius: 9px;
+  font-size: 14px;
+}{
   margin-top: 15px;
   width: 100%;
   max-width: 240px;
@@ -158,7 +209,137 @@ footer span:first-child {
 }
 </style>
 </head>
+<audio id="audioPlayer"></audio>
+  
+<script>
+const audio = document.getElementById("audioPlayer");
+const fileInput = document.getElementById("file");
+const playlist = document.getElementById("playlist");
 
+let songs = [];
+let currentIndex = 0;
+let timerId = null;
+
+function loadSong(index) {
+  if (!songs.length) return;
+
+  currentIndex = index;
+  audio.src = songs[currentIndex].url;
+
+  document.getElementById("songName").textContent =
+    songs[currentIndex].name;
+
+  document.getElementById("songInfo").textContent =
+    "Música " + (currentIndex + 1) + " de " + songs.length;
+
+  updatePlaylist();
+  audio.play();
+}
+
+function updatePlaylist() {
+  playlist.innerHTML = "";
+
+  songs.forEach((song, index) => {
+    const item = document.createElement("div");
+    item.textContent =
+      (index === currentIndex ? "▶ " : "♫ ") + song.name;
+
+    item.style.padding = "12px";
+    item.style.borderBottom = "1px solid #333";
+    item.style.cursor = "pointer";
+    item.style.color =
+      index === currentIndex ? "#00c853" : "#fff";
+
+    item.addEventListener("click", () => loadSong(index));
+    playlist.appendChild(item);
+  });
+}
+
+fileInput.addEventListener("change", () => {
+  const files = Array.from(fileInput.files);
+
+  files.forEach(file => {
+    songs.push({
+      name: file.name.replace(/\.[^/.]+$/, ""),
+      url: URL.createObjectURL(file)
+    });
+  });
+
+  if (songs.length && !audio.src) {
+    loadSong(0);
+  } else {
+    updatePlaylist();
+  }
+
+  fileInput.value = "";
+});
+
+document.getElementById("playBtn").addEventListener("click", () => {
+  if (!songs.length) {
+    fileInput.click();
+    return;
+  }
+
+  if (audio.paused) {
+    audio.play();
+  } else {
+    audio.pause();
+  }
+});
+
+audio.addEventListener("play", () => {
+  document.getElementById("playBtn").textContent = "⏸️";
+});
+
+audio.addEventListener("pause", () => {
+  document.getElementById("playBtn").textContent = "▶️";
+});
+
+document.getElementById("nextBtn").addEventListener("click", () => {
+  if (songs.length) {
+    loadSong((currentIndex + 1) % songs.length);
+  }
+});
+
+document.getElementById("previousBtn").addEventListener("click", () => {
+  if (!songs.length) return;
+
+  if (audio.currentTime > 3) {
+    audio.currentTime = 0;
+  } else {
+    loadSong((currentIndex - 1 + songs.length) % songs.length);
+  }
+});
+
+audio.addEventListener("ended", () => {
+  if (songs.length > 1) {
+    loadSong((currentIndex + 1) % songs.length);
+  }
+});
+
+document.getElementById("muteBtn").addEventListener("click", () => {
+  audio.muted = !audio.muted;
+
+  document.getElementById("muteBtn").textContent =
+    audio.muted ? "🔇" : "🔊";
+});
+
+document.getElementById("sleepTimer").addEventListener("change", event => {
+  clearTimeout(timerId);
+  timerId = null;
+
+  const minutes = Number(event.target.value);
+
+  if (!minutes) return;
+
+  timerId = setTimeout(() => {
+    audio.pause();
+    event.target.value = "";
+    timerId = null;
+  }, minutes * 60 * 1000);
+});
+</script>
+  
 <body>
 
 <header>
@@ -171,6 +352,32 @@ footer span:first-child {
   <section class="player">
 
     <div class="cover">♫</div>
+
+<div class="controls">
+
+  <button id="previousBtn">⏮️</button>
+
+  <button id="playBtn">▶️</button>
+
+  <button id="nextBtn">⏭️</button>
+
+  <button id="muteBtn">🔊</button>
+
+</div>
+
+<div class="timer">
+
+  <h3>⏱️ Parar música automaticamente</h3>
+
+  <select id="sleepTimer">
+    <option value="">Desativado</option>
+    <option value="5">5 minutos</option>
+    <option value="10">10 minutos</option>
+    <option value="15">15 minutos</option>
+    <option value="20">20 minutos</option>
+  </select>
+
+</div>
 
     <h2 id="songName">Nenhuma música selecionada</h2>
 
