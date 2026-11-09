@@ -72,7 +72,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
   margin: 25px 0;
 }
 
@@ -80,14 +80,18 @@ button, select {
   cursor: pointer;
 }
 
+button {
+  font-family: Arial, sans-serif;
+}
+
 .controls button {
   background: #191919;
   color: white;
   border: 1px solid #333;
   border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  font-size: 19px;
+  width: 46px;
+  height: 46px;
+  font-size: 18px;
 }
 
 .controls .play-button {
@@ -136,20 +140,23 @@ h3 {
   margin-top: 35px;
 }
 
-#playlist {
+#playlist, #queue {
   list-style: none;
   padding: 0;
   text-align: left;
 }
 
-#playlist li {
+#playlist li, #queue li {
   background: #151515;
   border: 1px solid #252525;
   border-radius: 9px;
   padding: 14px;
   margin-bottom: 9px;
-  cursor: pointer;
   overflow-wrap: anywhere;
+}
+
+#playlist li {
+  cursor: pointer;
 }
 
 #playlist li.active {
@@ -162,6 +169,31 @@ h3 {
   font-size: 13px;
   min-height: 18px;
   margin-top: 12px;
+}
+
+.queue-button {
+  float: right;
+  background: #19d66b;
+  color: #080808;
+  border: 0;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-weight: bold;
+}
+
+.remove-button {
+  float: right;
+  background: #d62828;
+  color: white;
+  border: 0;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.empty {
+  color: #777;
+  font-size: 13px;
+  padding: 10px 0;
 }
 </style>
 </head>
@@ -215,10 +247,10 @@ h3 {
   </div>
 
   <h3>Minha biblioteca</h3>
-<ul id="playlist"></ul>
+  <ul id="playlist"></ul>
 
-<h3>🎶 Tocar a seguir</h3>
-<ul id="queue"></ul>
+  <h3>🎶 Tocar a seguir</h3>
+  <ul id="queue"></ul>
 
 </main>
 
@@ -227,6 +259,7 @@ const audio = document.getElementById("audioPlayer");
 const fileInput = document.getElementById("file");
 const addButton = document.getElementById("addButton");
 const playlist = document.getElementById("playlist");
+const queueElement = document.getElementById("queue");
 const playBtn = document.getElementById("playBtn");
 const previousBtn = document.getElementById("previousBtn");
 const nextBtn = document.getElementById("nextBtn");
@@ -237,10 +270,9 @@ const status = document.getElementById("status");
 const sleepTimer = document.getElementById("sleepTimer");
 
 let songs = [];
+let queue = [];
 let currentIndex = -1;
 let timer = null;
-  let queue = [];
-const queueElement = document.getElementById("queue");
 
 addButton.addEventListener("click", () => {
   fileInput.click();
@@ -259,6 +291,7 @@ fileInput.addEventListener("change", () => {
   });
 
   renderPlaylist();
+
   status.textContent = files.length
     ? "Músicas adicionadas à biblioteca!"
     : "Nenhuma música adicionada.";
@@ -269,18 +302,21 @@ fileInput.addEventListener("change", () => {
 function renderPlaylist() {
   playlist.innerHTML = "";
 
+  if (songs.length === 0) {
+    playlist.innerHTML = '<li class="empty">Sua biblioteca está vazia.</li>';
+    return;
+  }
+
   songs.forEach((song, index) => {
     const li = document.createElement("li");
-
     const name = document.createElement("span");
-    name.textContent = song.name;
-
     const add = document.createElement("button");
-    add.textContent = " + Fila";
-    add.style.cssText =
-      "float:right;background:#19d66b;color:#080808;border:0;border-radius:6px;padding:6px 10px;font-weight:bold;";
 
-    add.addEventListener("click", (event) => {
+    name.textContent = song.name;
+    add.textContent = "+ Fila";
+    add.className = "queue-button";
+
+    add.addEventListener("click", event => {
       event.stopPropagation();
       queue.push(index);
       renderQueue();
@@ -301,35 +337,35 @@ function renderPlaylist() {
   });
 }
 
-    li.addEventListener("click", () => {
-      playSong(index);
-    });
-
-    playlist.appendChild(li);
-  });
-}
 function renderQueue() {
   queueElement.innerHTML = "";
 
+  if (queue.length === 0) {
+    queueElement.innerHTML =
+      '<li class="empty">Nenhuma música na fila.</li>';
+    return;
+  }
+
   queue.forEach((songIndex, position) => {
     const li = document.createElement("li");
-
-    li.textContent = songs[songIndex].name + " ";
-
     const remove = document.createElement("button");
+
+    li.textContent = songs[songIndex].name;
     remove.textContent = "✕";
-    remove.style.cssText =
-      "float:right;background:#d62828;color:white;border:0;border-radius:6px;padding:6px 10px;";
+    remove.className = "remove-button";
+    remove.title = "Remover da fila";
 
     remove.addEventListener("click", () => {
       queue.splice(position, 1);
       renderQueue();
+      status.textContent = "Música removida da fila.";
     });
 
     li.appendChild(remove);
     queueElement.appendChild(li);
   });
 }
+
 function playSong(index) {
   if (index < 0 || index >= songs.length) return;
 
@@ -350,37 +386,6 @@ function playSong(index) {
   });
 }
 
-playBtn.addEventListener("click", () => {
-  if (songs.length === 0) {
-    status.textContent = "Adicione uma música primeiro.";
-    return;
-  }
-
-  if (currentIndex === -1) {
-    playSong(0);
-    return;
-  }
-
-  if (audio.paused) {
-    audio.play().then(() => {
-      playBtn.textContent = "Ⅱ";
-      status.textContent = "Reproduzindo agora";
-    }).catch(() => {
-      status.textContent = "Não foi possível reproduzir esta música.";
-    });
-  } else {
-    audio.pause();
-  }
-});
-
-audio.addEventListener("play", () => {
-  playBtn.textContent = "Ⅱ";
-});
-
-audio.addEventListener("pause", () => {
-  playBtn.textContent = "▶";
-});
-
 function playNext() {
   if (queue.length > 0) {
     const nextIndex = queue.shift();
@@ -398,10 +403,47 @@ function playNext() {
   }
 }
 
+playBtn.addEventListener("click", () => {
+  if (songs.length === 0) {
+    status.textContent = "Adicione uma música primeiro.";
+    return;
+  }
+
+  if (currentIndex === -1) {
+    playSong(0);
+    return;
+  }
+
+  if (audio.paused) {
+    audio.play().catch(() => {
+      status.textContent = "Não foi possível reproduzir esta música.";
+    });
+  } else {
+    audio.pause();
+  }
+});
+
+audio.addEventListener("play", () => {
+  playBtn.textContent = "Ⅱ";
+});
+
+audio.addEventListener("pause", () => {
+  playBtn.textContent = "▶";
+});
+
 nextBtn.addEventListener("click", playNext);
 
-  const previousIndex =
-    (currentIndex - 1 + songs.length) % songs.length;
+previousBtn.addEventListener("click", () => {
+  if (songs.length === 0) return;
+
+  if (audio.currentTime > 3) {
+    audio.currentTime = 0;
+    return;
+  }
+
+  const previousIndex = currentIndex <= 0
+    ? songs.length - 1
+    : currentIndex - 1;
 
   playSong(previousIndex);
 });
@@ -426,15 +468,20 @@ sleepTimer.addEventListener("change", () => {
     return;
   }
 
-  status.textContent = `A música vai parar em ${minutes} minutos.`;
+  status.textContent =
+    `A música vai parar em ${minutes} minutos.`;
 
   timer = setTimeout(() => {
     audio.pause();
     sleepTimer.value = "0";
-    status.textContent = "Temporizador finalizado. Música pausada.";
+    status.textContent =
+      "Temporizador finalizado. Música pausada.";
     timer = null;
   }, minutes * 60 * 1000);
 });
+
+renderPlaylist();
+renderQueue();
 </script>
 
 </body>
