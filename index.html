@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080808">
+<title>Premium Music</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #080808;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #111;
+  border-bottom: 1px solid #222;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.logo span {
+  color: #00c853;
+}
+
+header .head-icon {
+  color: #e53935;
+  font-size: 24px;
+}
+
+main {
+  padding: 20px;
+  padding-bottom: 110px;
+  max-width: 650px;
+  margin: auto;
+}
+
+h2 {
+  font-size: 19px;
+}
+
+.player {
+  background: #151515;
+  border: 1px solid #252525;
+  border-radius: 20px;
+  padding: 24px 18px;
+  text-align: center;
+  box-shadow: 0 8px 30px #0008;
+}
+
+.cover {
+  width: 190px;
+  height: 190px;
+  margin: 0 auto 22px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #00c853, #e53935);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 75px;
+  color: white;
+  box-shadow: 0 0 25px #00c85330;
+}
+
+#songName {
+  margin-bottom: 8px;
+  font-size: 20px;
+}
+
+#songInfo {
+  color: #999;
+  font-size: 14px;
+}
+
+button {
+  background: #00c853;
+  color: #080808;
+  border: none;
+  border-radius: 12px;
+  padding: 13px 18px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(.97);
+}
+
+.add-button {
+  margin-top: 15px;
+  width: 100%;
+  max-width: 240px;
+}
+
+.library {
+  margin-top: 28px;
+  background: #151515;
+  border: 1px solid #252525;
+  padding: 18px;
+  border-radius: 17px;
+}
+
+.library h2 {
+  margin-top: 0;
+}
+
+#playlist {
+  margin-top: 15px;
+  color: #999;
+  font-size: 14px;
+}
+
+.empty {
+  text-align: center;
+  padding: 20px 5px;
+  color: #777;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #111;
+  border-top: 1px solid #292929;
+  padding: 15px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+footer span {
+  color: #aaa;
+  font-size: 13px;
+}
+
+footer span:first-child {
+  color: #00c853;
+}
+
+.red {
+  color: #e53935;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">PREMIUM <span>MUSIC</span></div>
+  <span class="head-icon">🎧</span>
+</header>
+
+<main>
+
+  <section class="player">
+
+    <div class="cover">♫</div>
+
+    <h2 id="songName">Nenhuma música selecionada</h2>
+
+    <p id="songInfo">Escolha uma música do seu celular</p>
+
+    <input
+      type="file"
+      id="file"
+      accept="audio/*"
+      multiple
+      hidden
+    >
+
+    <button class="add-button"
+      onclick="document.getElementById('file').click()">
+      + Adicionar músicas
+    </button>
+
+  </section>
+
+  <section class="library">
+
+    <h2>Minha biblioteca</h2>
+
+    <div id="playlist">
+      <div class="empty">
+        Sua biblioteca está vazia.<br>
+        Adicione suas músicas para começar!
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  <span>⌂ Início</span>
+  <span>♫ Biblioteca</span>
+  <span class="red">⚙ Ajustes</span>
+</footer>
+
+</body>
+</html>
