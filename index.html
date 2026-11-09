@@ -381,20 +381,24 @@ audio.addEventListener("pause", () => {
   playBtn.textContent = "▶";
 });
 
-nextBtn.addEventListener("click", () => {
-  if (songs.length === 0) return;
-
-  const nextIndex = (currentIndex + 1) % songs.length;
-  playSong(nextIndex);
-});
-
-previousBtn.addEventListener("click", () => {
-  if (songs.length === 0) return;
-
-  if (audio.currentTime > 3) {
-    audio.currentTime = 0;
+function playNext() {
+  if (queue.length > 0) {
+    const nextIndex = queue.shift();
+    renderQueue();
+    playSong(nextIndex);
     return;
   }
+
+  if (songs.length > 0) {
+    const nextIndex = currentIndex === -1
+      ? 0
+      : (currentIndex + 1) % songs.length;
+
+    playSong(nextIndex);
+  }
+}
+
+nextBtn.addEventListener("click", playNext);
 
   const previousIndex =
     (currentIndex - 1 + songs.length) % songs.length;
@@ -403,12 +407,7 @@ previousBtn.addEventListener("click", () => {
 });
 
 audio.addEventListener("ended", () => {
-  if (songs.length > 1) {
-    const nextIndex = (currentIndex + 1) % songs.length;
-    playSong(nextIndex);
-  } else if (songs.length === 1) {
-    playSong(0);
-  }
+  playNext();
 });
 
 muteBtn.addEventListener("click", () => {
