@@ -239,6 +239,8 @@ const sleepTimer = document.getElementById("sleepTimer");
 let songs = [];
 let currentIndex = -1;
 let timer = null;
+  let queue = [];
+const queueElement = document.getElementById("queue");
 
 addButton.addEventListener("click", () => {
   fileInput.click();
