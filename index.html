@@ -271,11 +271,35 @@ function renderPlaylist() {
 
   songs.forEach((song, index) => {
     const li = document.createElement("li");
-    li.textContent = song.name;
+
+    const name = document.createElement("span");
+    name.textContent = song.name;
+
+    const add = document.createElement("button");
+    add.textContent = " + Fila";
+    add.style.cssText =
+      "float:right;background:#19d66b;color:#080808;border:0;border-radius:6px;padding:6px 10px;font-weight:bold;";
+
+    add.addEventListener("click", (event) => {
+      event.stopPropagation();
+      queue.push(index);
+      renderQueue();
+      status.textContent = "Música adicionada à fila!";
+    });
 
     if (index === currentIndex) {
       li.classList.add("active");
     }
+
+    li.addEventListener("click", () => {
+      playSong(index);
+    });
+
+    li.appendChild(name);
+    li.appendChild(add);
+    playlist.appendChild(li);
+  });
+}
 
     li.addEventListener("click", () => {
       playSong(index);
