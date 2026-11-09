@@ -8,9 +8,7 @@
 <title>Premium Music</title>
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -33,9 +31,7 @@ header {
   letter-spacing: 1px;
 }
 
-.logo span {
-  color: #19d66b;
-}
+.logo span { color: #19d66b; }
 
 main {
   padding: 20px;
@@ -49,12 +45,19 @@ main {
   margin: 35px auto 25px;
   border: 2px solid #19d66b;
   border-radius: 22px;
-  background: linear-gradient(145deg, #171717, #292929);
+  background: linear-gradient(145deg,#171717,#292929);
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   font-size: 85px;
   color: #19d66b;
+}
+
+.cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 #songName {
@@ -68,40 +71,65 @@ main {
   font-size: 14px;
 }
 
-audio {
-  display: none;
+audio { display: none; }
+
+/* PROGRESSO */
+
+.progress-area {
+  width: 100%;
+  max-width: 450px;
+  margin: 25px auto 10px;
 }
 
-/* CONTROLES DO PLAYER */
+.time-row {
+  display: flex;
+  justify-content: space-between;
+  color: #999;
+  font-size: 12px;
+}
+
+#progress {
+  width: 100%;
+  height: 5px;
+  margin: 12px 0;
+  accent-color: #19d66b;
+  cursor: pointer;
+}
+
+/* CONTROLES */
 
 .controls {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 7px;
-  margin: 30px auto;
+  gap: 5px;
+  margin: 22px auto;
   width: 100%;
 }
 
 .controls > button,
 .menu-area > button {
-  width: 43px;
+  width: 40px;
   height: 45px;
   flex-shrink: 0;
   border: none;
   background: transparent;
   color: white;
-  font-size: 22px;
+  font-size: 21px;
   cursor: pointer;
 }
 
+.controls button.active-control {
+  color: #19d66b;
+}
+
 .controls .play-button {
-  width: 62px;
-  height: 62px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
   background: #19d66b;
   color: #080808;
-  font-size: 26px;
+  font-size: 25px;
 }
 
 .menu-area {
@@ -109,9 +137,7 @@ audio {
   flex-shrink: 0;
 }
 
-.menu-button {
-  font-size: 30px !important;
-}
+.menu-button { font-size: 30px !important; }
 
 /* MENUS */
 
@@ -140,28 +166,19 @@ audio {
 
 .popup-option {
   display: block;
-  flex: none;
   width: 100%;
   min-height: 45px;
   padding: 13px 12px;
-  margin: 0;
   border: none;
   border-radius: 7px;
   background: transparent;
   color: white;
   text-align: left;
-  font-family: Arial, sans-serif;
   font-size: 15px;
-  line-height: 20px;
-  white-space: nowrap;
   cursor: pointer;
 }
 
-.popup-option:active {
-  background: #383838;
-}
-
-/* TEMPORIZADOR */
+.popup-option:active { background: #383838; }
 
 .timer-options {
   display: none;
@@ -171,9 +188,7 @@ audio {
   padding-top: 5px;
 }
 
-.timer-options.show {
-  display: block;
-}
+.timer-options.show { display: block; }
 
 .timer-options button {
   display: block;
@@ -188,7 +203,7 @@ audio {
   cursor: pointer;
 }
 
-/* ADICIONAR MUSICAS */
+/* ADICIONAR */
 
 .add-button {
   width: 100%;
@@ -215,7 +230,7 @@ h3 {
   margin-top: 38px;
 }
 
-/* LISTA DE MUSICAS */
+/* BIBLIOTECA */
 
 #playlist {
   list-style: none;
@@ -237,9 +252,7 @@ h3 {
   margin-bottom: 9px;
 }
 
-.track.active {
-  border-color: #19d66b;
-}
+.track.active { border-color: #19d66b; }
 
 .track-name {
   flex: 1;
@@ -254,9 +267,7 @@ h3 {
   cursor: pointer;
 }
 
-.track.active .track-name {
-  color: #19d66b;
-}
+.track.active .track-name { color: #19d66b; }
 
 .track-menu-area {
   position: relative;
@@ -280,9 +291,7 @@ h3 {
   width: 190px;
 }
 
-.delete-option {
-  color: #ff5555;
-}
+.delete-option { color: #ff5555; }
 
 .empty {
   color: #777;
@@ -301,35 +310,33 @@ h3 {
 
 <main>
 
-  <div class="cover">♫</div>
+  <div class="cover" id="cover">♫</div>
 
   <h2 id="songName">Nenhuma música selecionada</h2>
   <p id="songInfo">Adicione músicas do seu celular</p>
 
   <audio id="audioPlayer"></audio>
 
+  <div class="progress-area">
+    <div class="time-row">
+      <span id="currentTime">0:00</span>
+      <span id="duration">0:00</span>
+    </div>
+    <input type="range" id="progress" min="0" max="1000" value="0">
+  </div>
+
   <div class="controls">
-
+    <button id="shuffleBtn" title="Aleatório">🔀</button>
     <button id="previousBtn" title="Voltar">⏮</button>
-
-    <button id="playBtn" class="play-button" title="Reproduzir">
-      ▶
-    </button>
-
+    <button id="playBtn" class="play-button">▶</button>
     <button id="nextBtn" title="Avançar">⏭</button>
-
+    <button id="repeatBtn" title="Repetir">🔁</button>
     <button id="muteBtn" title="Silenciar">🔊</button>
 
-    <!-- MENU PRINCIPAL: SOMENTE TEMPORIZADOR -->
-
     <div class="menu-area">
-
-      <button id="menuBtn" class="menu-button" title="Mais opções">
-        ⋮
-      </button>
+      <button id="menuBtn" class="menu-button">⋮</button>
 
       <div class="popup-menu main-menu" id="mainMenu">
-
         <button class="popup-option" id="timerBtn">
           ⏰ Temporizador
         </button>
@@ -342,30 +349,25 @@ h3 {
           <button data-minutes="30">30 minutos</button>
           <button data-minutes="0">Desativar temporizador</button>
         </div>
-
       </div>
     </div>
-
   </div>
 
-  <input
-    type="file"
-    id="file"
-    accept="audio/*"
-    multiple
-    hidden
-  >
+  <input type="file" id="file" accept="audio/*" multiple hidden>
 
   <button class="add-button" id="addButton">
     + Adicionar músicas
   </button>
 
-  <p id="status"></p>
+  <p id="status">Preparando biblioteca...</p>
 
   <h3>Minha biblioteca</h3>
   <ul id="playlist"></ul>
 
 </main>
+
+<!-- Leitor de capas incorporadas nos arquivos -->
+<script src="https://cdn.jsdelivr.net/npm/jsmediatags@3.9.7/dist/jsmediatags.min.js"></script>
 
 <script>
 const audio = document.getElementById("audioPlayer");
@@ -376,10 +378,17 @@ const playBtn = document.getElementById("playBtn");
 const previousBtn = document.getElementById("previousBtn");
 const nextBtn = document.getElementById("nextBtn");
 const muteBtn = document.getElementById("muteBtn");
+const shuffleBtn = document.getElementById("shuffleBtn");
+const repeatBtn = document.getElementById("repeatBtn");
 
 const songName = document.getElementById("songName");
 const songInfo = document.getElementById("songInfo");
 const status = document.getElementById("status");
+const cover = document.getElementById("cover");
+
+const progress = document.getElementById("progress");
+const currentTimeLabel = document.getElementById("currentTime");
+const durationLabel = document.getElementById("duration");
 
 const menuBtn = document.getElementById("menuBtn");
 const mainMenu = document.getElementById("mainMenu");
@@ -392,41 +401,173 @@ let currentSongId = null;
 let nextSongId = 1;
 let timer = null;
 
-// ADICIONAR MUSICAS
+let shuffle = false;
+let repeatMode = 0;
+// 0 = desligado
+// 1 = repetir música
+// 2 = repetir biblioteca
 
-document.getElementById("addButton").addEventListener("click", () => {
-  fileInput.click();
-});
+let isSeeking = false;
+let db;
 
-fileInput.addEventListener("change", () => {
-  const files = Array.from(fileInput.files);
+/* BANCO DE DADOS LOCAL */
 
-  files.forEach(file => {
-    if (!file.type.startsWith("audio/")) return;
+function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("PremiumMusicDB", 1);
 
-    songs.push({
-      id: nextSongId++,
-      name: file.name.replace(/\.[^/.]+$/, ""),
-      url: URL.createObjectURL(file)
-    });
+    request.onupgradeneeded = event => {
+      const database = event.target.result;
+
+      if (!database.objectStoreNames.contains("songs")) {
+        database.createObjectStore("songs", {
+          keyPath: "id"
+        });
+      }
+    };
+
+    request.onsuccess = event => resolve(event.target.result);
+    request.onerror = () => reject(request.error);
   });
+}
 
-  renderPlaylist();
+function saveSong(song) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction("songs", "readwrite");
+    transaction.objectStore("songs").put({
+      id: song.id,
+      name: song.name,
+      blob: song.blob,
+      picture: song.picture || null
+    });
 
-  status.textContent = files.length
-    ? "Músicas adicionadas à biblioteca!"
-    : "Nenhuma música adicionada.";
+    transaction.oncomplete = resolve;
+    transaction.onerror = () => reject(transaction.error);
+  });
+}
 
-  fileInput.value = "";
-});
+function removeSavedSong(id) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction("songs", "readwrite");
+    transaction.objectStore("songs").delete(id);
+    transaction.oncomplete = resolve;
+    transaction.onerror = () => reject(transaction.error);
+  });
+}
 
-// ENCONTRAR MUSICA PELO ID
+function loadSavedSongs() {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction("songs", "readonly");
+    const request = transaction.objectStore("songs").getAll();
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+/* UTILITÁRIOS */
 
 function findSong(id) {
   return songs.find(song => song.id === id);
 }
 
-// MOSTRAR BIBLIOTECA
+function formatTime(seconds) {
+  if (!Number.isFinite(seconds)) return "0:00";
+
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+
+  return minutes + ":" + String(secs).padStart(2, "0");
+}
+
+function getCover(picture) {
+  if (!picture || !picture.data) return null;
+
+  const bytes = new Uint8Array(picture.data);
+  let binary = "";
+
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+
+  return "data:" + picture.format + ";base64," + btoa(binary);
+}
+
+function readCover(file) {
+  return new Promise(resolve => {
+    if (!window.jsmediatags) {
+      resolve(null);
+      return;
+    }
+
+    window.jsmediatags.read(file, {
+      onSuccess: result => {
+        resolve(getCover(result.tags.picture));
+      },
+      onError: () => resolve(null)
+    });
+  });
+}
+
+/* CAPA */
+
+function showCover(song) {
+  cover.innerHTML = "";
+
+  if (song && song.picture) {
+    const img = document.createElement("img");
+    img.src = song.picture;
+    img.alt = "Capa da música";
+    cover.appendChild(img);
+  } else {
+    cover.textContent = "♫";
+  }
+}
+
+/* ADICIONAR MÚSICAS */
+
+document.getElementById("addButton").addEventListener("click", () => {
+  fileInput.click();
+});
+
+fileInput.addEventListener("change", async () => {
+  const files = Array.from(fileInput.files);
+  let added = 0;
+
+  for (const file of files) {
+    if (!file.type.startsWith("audio/")) continue;
+
+    const song = {
+      id: nextSongId++,
+      name: file.name.replace(/\.[^/.]+$/, ""),
+      blob: file,
+      url: URL.createObjectURL(file),
+      picture: await readCover(file)
+    };
+
+    songs.push(song);
+
+    try {
+      await saveSong(song);
+      added++;
+    } catch (error) {
+      status.textContent =
+        "Não foi possível salvar uma música. Verifique o espaço disponível.";
+    }
+  }
+
+  renderPlaylist();
+
+  if (added > 0) {
+    status.textContent = added + " música(s) adicionada(s) e salva(s)!";
+  } else if (files.length === 0) {
+    status.textContent = "Nenhuma música selecionada.";
+  }
+
+  fileInput.value = "";
+});
+
+/* MOSTRAR BIBLIOTECA */
 
 function renderPlaylist() {
   playlist.innerHTML = "";
@@ -454,15 +595,12 @@ function renderPlaylist() {
       closeAllMenus();
     });
 
-    // TRES PONTINHOS DE CADA MUSICA
-
     const menuArea = document.createElement("div");
     menuArea.className = "track-menu-area";
 
     const dots = document.createElement("button");
     dots.className = "track-menu-button";
     dots.textContent = "⋮";
-    dots.title = "Opções da música";
 
     const trackMenu = document.createElement("div");
     trackMenu.className = "popup-menu track-menu";
@@ -473,10 +611,7 @@ function renderPlaylist() {
 
     playNextOption.addEventListener("click", () => {
       queue.push(song.id);
-
-      status.textContent =
-        "Música adicionada para tocar a seguir!";
-
+      status.textContent = "Música adicionada para tocar a seguir!";
       closeAllMenus();
     });
 
@@ -489,16 +624,13 @@ function renderPlaylist() {
       closeAllMenus();
     });
 
-    dots.addEventListener("click", (event) => {
+    dots.addEventListener("click", event => {
       event.stopPropagation();
 
       const wasOpen = trackMenu.classList.contains("show");
-
       closeAllMenus();
 
-      if (!wasOpen) {
-        trackMenu.classList.add("show");
-      }
+      if (!wasOpen) trackMenu.classList.add("show");
     });
 
     trackMenu.appendChild(playNextOption);
@@ -514,28 +646,31 @@ function renderPlaylist() {
   });
 }
 
-// REPRODUZIR MUSICA
+/* REPRODUZIR */
 
 function playSong(id) {
   const song = findSong(id);
-
   if (!song) return;
 
   currentSongId = id;
   audio.src = song.url;
 
   songName.textContent = song.name;
-  songInfo.textContent = "Biblioteca do celular";
+  songInfo.textContent = "Biblioteca salva no aparelho";
 
+  showCover(song);
   renderPlaylist();
 
+  progress.value = 0;
+  currentTimeLabel.textContent = "0:00";
+  durationLabel.textContent = "0:00";
+
   audio.play().catch(() => {
-    status.textContent =
-      "Não foi possível reproduzir esta música.";
+    status.textContent = "Não foi possível reproduzir esta música.";
   });
 }
 
-// TOCAR PROXIMA MUSICA
+/* PRÓXIMA MÚSICA */
 
 function playNext() {
   while (queue.length > 0) {
@@ -549,18 +684,51 @@ function playNext() {
 
   if (songs.length === 0) return;
 
-  const currentIndex = songs.findIndex(
-    song => song.id === currentSongId
-  );
+  if (shuffle && songs.length > 1) {
+    const available = songs.filter(song => song.id !== currentSongId);
+    const randomSong = available[Math.floor(Math.random() * available.length)];
+    playSong(randomSong.id);
+    return;
+  }
 
-  const nextIndex = currentIndex === -1
-    ? 0
-    : (currentIndex + 1) % songs.length;
+  const currentIndex = songs.findIndex(song => song.id === currentSongId);
 
+  if (currentIndex === -1) {
+    playSong(songs[0].id);
+    return;
+  }
+
+  if (currentIndex === songs.length - 1 && repeatMode !== 2) {
+    currentSongId = null;
+    audio.pause();
+    playBtn.textContent = "▶";
+    status.textContent = "Playlist finalizada.";
+    return;
+  }
+
+  const nextIndex = (currentIndex + 1) % songs.length;
   playSong(songs[nextIndex].id);
 }
 
-// PLAY E PAUSA
+/* ANTERIOR */
+
+previousBtn.addEventListener("click", () => {
+  if (songs.length === 0) return;
+
+  if (audio.currentTime > 3) {
+    audio.currentTime = 0;
+    return;
+  }
+
+  const currentIndex = songs.findIndex(song => song.id === currentSongId);
+  const previousIndex = currentIndex <= 0
+    ? songs.length - 1
+    : currentIndex - 1;
+
+  playSong(songs[previousIndex].id);
+});
+
+/* PLAY E PAUSA */
 
 playBtn.addEventListener("click", () => {
   if (songs.length === 0) {
@@ -588,43 +756,99 @@ audio.addEventListener("pause", () => {
   playBtn.textContent = "▶";
 });
 
-// AVANCAR
+/* PROGRESSO DA MÚSICA */
 
-nextBtn.addEventListener("click", playNext);
+audio.addEventListener("loadedmetadata", () => {
+  durationLabel.textContent = formatTime(audio.duration);
+});
 
-// VOLTAR
+audio.addEventListener("timeupdate", () => {
+  if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
+    progress.value = (audio.currentTime / audio.duration) * 1000;
+  }
 
-previousBtn.addEventListener("click", () => {
-  if (songs.length === 0) return;
+  currentTimeLabel.textContent = formatTime(audio.currentTime);
+});
 
-  if (audio.currentTime > 3) {
+progress.addEventListener("input", () => {
+  isSeeking = true;
+
+  if (Number.isFinite(audio.duration)) {
+    const newTime = (Number(progress.value) / 1000) * audio.duration;
+    currentTimeLabel.textContent = formatTime(newTime);
+  }
+});
+
+function seekAudio() {
+  if (Number.isFinite(audio.duration) && audio.duration > 0) {
+    audio.currentTime = (Number(progress.value) / 1000) * audio.duration;
+  }
+
+  isSeeking = false;
+}
+
+progress.addEventListener("change", seekAudio);
+progress.addEventListener("pointerup", seekAudio);
+progress.addEventListener("touchend", seekAudio);
+
+/* REPETIR */
+
+repeatBtn.addEventListener("click", () => {
+  repeatMode = (repeatMode + 1) % 3;
+
+  if (repeatMode === 0) {
+    repeatBtn.textContent = "🔁";
+    repeatBtn.classList.remove("active-control");
+    repeatBtn.title = "Repetição desligada";
+    status.textContent = "Repetição desligada.";
+  } else if (repeatMode === 1) {
+    repeatBtn.textContent = "🔂";
+    repeatBtn.classList.add("active-control");
+    repeatBtn.title = "Repetir música";
+    status.textContent = "Repetindo esta música.";
+  } else {
+    repeatBtn.textContent = "🔁";
+    repeatBtn.classList.add("active-control");
+    repeatBtn.title = "Repetir playlist";
+    status.textContent = "Repetindo a playlist.";
+  }
+});
+
+/* ALEATÓRIO */
+
+shuffleBtn.addEventListener("click", () => {
+  shuffle = !shuffle;
+  shuffleBtn.classList.toggle("active-control", shuffle);
+
+  status.textContent = shuffle
+    ? "Modo aleatório ativado."
+    : "Modo aleatório desativado.";
+});
+
+/* FINAL DA MÚSICA */
+
+audio.addEventListener("ended", () => {
+  if (repeatMode === 1 && currentSongId !== null) {
     audio.currentTime = 0;
+    audio.play();
     return;
   }
 
-  const currentIndex = songs.findIndex(
-    song => song.id === currentSongId
-  );
-
-  const previousIndex = currentIndex <= 0
-    ? songs.length - 1
-    : currentIndex - 1;
-
-  playSong(songs[previousIndex].id);
+  playNext();
 });
 
-// AO TERMINAR A MUSICA
+/* AVANÇAR MANUALMENTE */
 
-audio.addEventListener("ended", playNext);
+nextBtn.addEventListener("click", playNext);
 
-// MUTE
+/* MUTE */
 
 muteBtn.addEventListener("click", () => {
   audio.muted = !audio.muted;
   muteBtn.textContent = audio.muted ? "🔇" : "🔊";
 });
 
-// FECHAR TODOS OS MENUS
+/* FECHAR MENUS */
 
 function closeAllMenus() {
   mainMenu.classList.remove("show");
@@ -635,23 +859,20 @@ function closeAllMenus() {
   });
 }
 
-// MENU PRINCIPAL
+/* MENU PRINCIPAL */
 
-menuBtn.addEventListener("click", (event) => {
+menuBtn.addEventListener("click", event => {
   event.stopPropagation();
 
   const wasOpen = mainMenu.classList.contains("show");
-
   closeAllMenus();
 
-  if (!wasOpen) {
-    mainMenu.classList.add("show");
-  }
+  if (!wasOpen) mainMenu.classList.add("show");
 });
 
-// TEMPORIZADOR
+/* TEMPORIZADOR */
 
-timerBtn.addEventListener("click", (event) => {
+timerBtn.addEventListener("click", event => {
   event.stopPropagation();
   timerOptions.classList.toggle("show");
 });
@@ -666,15 +887,11 @@ timerOptions.querySelectorAll("button").forEach(button => {
     if (minutes === 0) {
       status.textContent = "Temporizador desativado.";
     } else {
-      status.textContent =
-        `A música vai parar em ${minutes} minutos.`;
+      status.textContent = "A música vai parar em " + minutes + " minutos.";
 
       timer = setTimeout(() => {
         audio.pause();
-
-        status.textContent =
-          "Temporizador finalizado. Música pausada.";
-
+        status.textContent = "Temporizador finalizado. Música pausada.";
         timer = null;
       }, minutes * 60 * 1000);
     }
@@ -683,52 +900,24 @@ timerOptions.querySelectorAll("button").forEach(button => {
   });
 });
 
-// EXCLUIR MUSICA
+/* EXCLUIR */
 
-function deleteSong(id) {
+async function deleteSong(id) {
   const index = songs.findIndex(song => song.id === id);
-
   if (index === -1) return;
 
   const song = songs[index];
 
-  // Retirar da fila
   queue = queue.filter(queuedId => queuedId !== id);
 
-  // Se for a música atual, parar a reprodução
   if (currentSongId === id) {
     audio.pause();
     audio.removeAttribute("src");
     audio.load();
 
     currentSongId = null;
-
     songName.textContent = "Nenhuma música selecionada";
     songInfo.textContent = "Adicione músicas do seu celular";
-  }
-
-  URL.revokeObjectURL(song.url);
-
-  songs.splice(index, 1);
-
-  renderPlaylist();
-
-  status.textContent = "Música excluída da biblioteca.";
-}
-
-// FECHAR MENU AO CLICAR FORA
-
-document.addEventListener("click", (event) => {
-  if (!event.target.closest(".menu-area") &&
-      !event.target.closest(".track-menu-area")) {
-    closeAllMenus();
-  }
-});
-
-// INICIAR
-
-renderPlaylist();
-</script>
-
-</body>
-</html>
+    showCover(null);
+    progress.value = 0;
+    currentTimeLabel.textContent = "0:00
