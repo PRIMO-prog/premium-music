@@ -308,7 +308,28 @@ function renderPlaylist() {
     playlist.appendChild(li);
   });
 }
+function renderQueue() {
+  queueElement.innerHTML = "";
 
+  queue.forEach((songIndex, position) => {
+    const li = document.createElement("li");
+
+    li.textContent = songs[songIndex].name + " ";
+
+    const remove = document.createElement("button");
+    remove.textContent = "✕";
+    remove.style.cssText =
+      "float:right;background:#d62828;color:white;border:0;border-radius:6px;padding:6px 10px;";
+
+    remove.addEventListener("click", () => {
+      queue.splice(position, 1);
+      renderQueue();
+    });
+
+    li.appendChild(remove);
+    queueElement.appendChild(li);
+  });
+}
 function playSong(index) {
   if (index < 0 || index >= songs.length) return;
 
