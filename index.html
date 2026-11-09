@@ -8,16 +8,13 @@
 <title>Premium Music</title>
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
   background: #080808;
   color: white;
   font-family: Arial, sans-serif;
-  padding-bottom: 30px;
 }
 
 header {
@@ -25,7 +22,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #222;
+  border-bottom: 1px solid #252525;
 }
 
 .logo {
@@ -34,33 +31,32 @@ header {
   letter-spacing: 1px;
 }
 
-.logo span {
-  color: #19d66b;
-}
+.logo span { color: #19d66b; }
 
 main {
   padding: 20px;
   text-align: center;
+  padding-bottom: 45px;
 }
 
 .cover {
-  width: 190px;
-  height: 190px;
-  background: linear-gradient(145deg, #151515, #222);
+  width: 210px;
+  height: 210px;
+  margin: 35px auto 25px;
   border: 2px solid #19d66b;
-  border-radius: 20px;
-  margin: 25px auto;
+  border-radius: 22px;
+  background: linear-gradient(145deg, #171717, #292929);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 75px;
+  font-size: 85px;
   color: #19d66b;
 }
 
 #songName {
   font-size: 21px;
-  margin-bottom: 8px;
   overflow-wrap: anywhere;
+  margin-bottom: 7px;
 }
 
 #songInfo {
@@ -68,94 +64,133 @@ main {
   font-size: 14px;
 }
 
+audio { display: none; }
+
 .controls {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px;
-  margin: 25px 0;
-}
-
-button, select {
-  cursor: pointer;
-}
-
-button {
-  font-family: Arial, sans-serif;
+  gap: 13px;
+  margin: 30px 0;
 }
 
 .controls button {
-  background: #191919;
-  color: white;
-  border: 1px solid #333;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
-  width: 46px;
-  height: 46px;
-  font-size: 18px;
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 23px;
+  cursor: pointer;
 }
 
 .controls .play-button {
+  width: 65px;
+  height: 65px;
   background: #19d66b;
   color: #080808;
-  width: 62px;
-  height: 62px;
-  font-size: 23px;
+  font-size: 27px;
+}
+
+.controls button:active { opacity: .65; }
+
+.menu-area {
+  position: relative;
+}
+
+.menu-button {
+  font-size: 27px !important;
+}
+
+.menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 48px;
+  width: 220px;
+  background: #202020;
+  border: 1px solid #383838;
+  border-radius: 12px;
+  padding: 7px;
+  z-index: 10;
+  text-align: left;
+  box-shadow: 0 8px 25px #0009;
+}
+
+.menu.show { display: block; }
+
+.menu-item {
+  width: 100%;
   border: none;
+  background: transparent;
+  color: white;
+  padding: 14px 12px;
+  text-align: left;
+  font-size: 15px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.menu-item:active { background: #333; }
+
+.timer-options {
+  display: none;
+  border-top: 1px solid #444;
+  padding-top: 5px;
+}
+
+.timer-options.show { display: block; }
+
+.timer-options button {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #19d66b;
+  padding: 11px 14px;
+  text-align: left;
+  font-size: 14px;
 }
 
 .add-button {
+  width: 100%;
+  max-width: 280px;
+  padding: 14px;
   background: #19d66b;
   color: #080808;
   border: none;
   border-radius: 10px;
-  padding: 13px 20px;
   font-size: 15px;
   font-weight: bold;
-  width: 100%;
-  max-width: 280px;
+  cursor: pointer;
 }
 
-.timer {
-  margin: 25px auto;
-}
-
-.timer label {
-  display: block;
-  margin-bottom: 10px;
-  color: #bbb;
-}
-
-.timer select {
-  background: #191919;
-  color: white;
-  border: 1px solid #333;
-  border-radius: 8px;
-  padding: 12px;
-  width: 100%;
-  max-width: 240px;
+#status {
+  min-height: 20px;
+  color: #999;
+  font-size: 13px;
+  margin-top: 15px;
 }
 
 h3 {
   text-align: left;
-  margin-top: 35px;
+  margin-top: 38px;
 }
 
-#playlist, #queue {
+#playlist {
   list-style: none;
   padding: 0;
   text-align: left;
 }
 
-#playlist li, #queue li {
+#playlist li {
   background: #151515;
-  border: 1px solid #252525;
+  border: 1px solid #292929;
   border-radius: 9px;
-  padding: 14px;
+  padding: 15px;
   margin-bottom: 9px;
   overflow-wrap: anywhere;
-}
-
-#playlist li {
   cursor: pointer;
 }
 
@@ -164,37 +199,12 @@ h3 {
   color: #19d66b;
 }
 
-#status {
-  color: #999;
-  font-size: 13px;
-  min-height: 18px;
-  margin-top: 12px;
-}
-
-.queue-button {
-  float: right;
-  background: #19d66b;
-  color: #080808;
-  border: 0;
-  border-radius: 6px;
-  padding: 6px 10px;
-  font-weight: bold;
-}
-
-.remove-button {
-  float: right;
-  background: #d62828;
-  color: white;
-  border: 0;
-  border-radius: 6px;
-  padding: 6px 10px;
-}
-
 .empty {
   color: #777;
   font-size: 13px;
-  padding: 10px 0;
+  cursor: default !important;
 }
+
 </style>
 </head>
 
@@ -215,10 +225,44 @@ h3 {
   <audio id="audioPlayer"></audio>
 
   <div class="controls">
-    <button id="previousBtn" title="Música anterior">⏮</button>
-    <button id="playBtn" class="play-button" title="Reproduzir">▶</button>
-    <button id="nextBtn" title="Próxima música">⏭</button>
-    <button id="muteBtn" title="Silenciar">🔊</button>
+
+    <button id="previousBtn" title="Voltar">⏮</button>
+
+    <button id="playBtn" class="play-button" title="Reproduzir">
+      ▶
+    </button>
+
+    <button id="nextBtn" title="Avançar">⏭</button>
+
+    <button id="muteBtn" title="Mute">🔊</button>
+
+    <div class="menu-area">
+      <button id="menuBtn" class="menu-button" title="Mais opções">
+        ⋮
+      </button>
+
+      <div class="menu" id="menu">
+
+        <button class="menu-item" id="playNextBtn">
+          ▶ Tocar a seguir
+        </button>
+
+        <button class="menu-item" id="timerBtn">
+          ⏰ Temporizador
+        </button>
+
+        <div class="timer-options" id="timerOptions">
+          <button data-minutes="5">5 minutos</button>
+          <button data-minutes="10">10 minutos</button>
+          <button data-minutes="15">15 minutos</button>
+          <button data-minutes="20">20 minutos</button>
+          <button data-minutes="30">30 minutos</button>
+          <button data-minutes="0">Desativar temporizador</button>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 
   <input
@@ -235,31 +279,15 @@ h3 {
 
   <p id="status"></p>
 
-  <div class="timer">
-    <label for="sleepTimer">⏰ Temporizador para parar a música</label>
-    <select id="sleepTimer">
-      <option value="0">Desativado</option>
-      <option value="5">5 minutos</option>
-      <option value="10">10 minutos</option>
-      <option value="15">15 minutos</option>
-      <option value="20">20 minutos</option>
-    </select>
-  </div>
-
   <h3>Minha biblioteca</h3>
   <ul id="playlist"></ul>
-
-  <h3>🎶 Tocar a seguir</h3>
-  <ul id="queue"></ul>
 
 </main>
 
 <script>
 const audio = document.getElementById("audioPlayer");
 const fileInput = document.getElementById("file");
-const addButton = document.getElementById("addButton");
 const playlist = document.getElementById("playlist");
-const queueElement = document.getElementById("queue");
 const playBtn = document.getElementById("playBtn");
 const previousBtn = document.getElementById("previousBtn");
 const nextBtn = document.getElementById("nextBtn");
@@ -267,14 +295,19 @@ const muteBtn = document.getElementById("muteBtn");
 const songName = document.getElementById("songName");
 const songInfo = document.getElementById("songInfo");
 const status = document.getElementById("status");
-const sleepTimer = document.getElementById("sleepTimer");
+
+const menuBtn = document.getElementById("menuBtn");
+const menu = document.getElementById("menu");
+const playNextBtn = document.getElementById("playNextBtn");
+const timerBtn = document.getElementById("timerBtn");
+const timerOptions = document.getElementById("timerOptions");
 
 let songs = [];
 let queue = [];
 let currentIndex = -1;
 let timer = null;
 
-addButton.addEventListener("click", () => {
+document.getElementById("addButton").addEventListener("click", () => {
   fileInput.click();
 });
 
@@ -293,7 +326,7 @@ fileInput.addEventListener("change", () => {
   renderPlaylist();
 
   status.textContent = files.length
-    ? "Músicas adicionadas à biblioteca!"
+    ? "Músicas adicionadas!"
     : "Nenhuma música adicionada.";
 
   fileInput.value = "";
@@ -303,25 +336,14 @@ function renderPlaylist() {
   playlist.innerHTML = "";
 
   if (songs.length === 0) {
-    playlist.innerHTML = '<li class="empty">Sua biblioteca está vazia.</li>';
+    playlist.innerHTML =
+      '<li class="empty">Sua biblioteca está vazia.</li>';
     return;
   }
 
   songs.forEach((song, index) => {
     const li = document.createElement("li");
-    const name = document.createElement("span");
-    const add = document.createElement("button");
-
-    name.textContent = song.name;
-    add.textContent = "+ Fila";
-    add.className = "queue-button";
-
-    add.addEventListener("click", event => {
-      event.stopPropagation();
-      queue.push(index);
-      renderQueue();
-      status.textContent = "Música adicionada à fila!";
-    });
+    li.textContent = song.name;
 
     if (index === currentIndex) {
       li.classList.add("active");
@@ -331,38 +353,7 @@ function renderPlaylist() {
       playSong(index);
     });
 
-    li.appendChild(name);
-    li.appendChild(add);
     playlist.appendChild(li);
-  });
-}
-
-function renderQueue() {
-  queueElement.innerHTML = "";
-
-  if (queue.length === 0) {
-    queueElement.innerHTML =
-      '<li class="empty">Nenhuma música na fila.</li>';
-    return;
-  }
-
-  queue.forEach((songIndex, position) => {
-    const li = document.createElement("li");
-    const remove = document.createElement("button");
-
-    li.textContent = songs[songIndex].name;
-    remove.textContent = "✕";
-    remove.className = "remove-button";
-    remove.title = "Remover da fila";
-
-    remove.addEventListener("click", () => {
-      queue.splice(position, 1);
-      renderQueue();
-      status.textContent = "Música removida da fila.";
-    });
-
-    li.appendChild(remove);
-    queueElement.appendChild(li);
   });
 }
 
@@ -377,11 +368,7 @@ function playSong(index) {
 
   renderPlaylist();
 
-  audio.play().then(() => {
-    playBtn.textContent = "Ⅱ";
-    status.textContent = "Reproduzindo agora";
-  }).catch(() => {
-    playBtn.textContent = "▶";
+  audio.play().catch(() => {
     status.textContent = "Não foi possível reproduzir esta música.";
   });
 }
@@ -389,7 +376,6 @@ function playSong(index) {
 function playNext() {
   if (queue.length > 0) {
     const nextIndex = queue.shift();
-    renderQueue();
     playSong(nextIndex);
     return;
   }
@@ -411,12 +397,9 @@ playBtn.addEventListener("click", () => {
 
   if (currentIndex === -1) {
     playSong(0);
-    return;
-  }
-
-  if (audio.paused) {
+  } else if (audio.paused) {
     audio.play().catch(() => {
-      status.textContent = "Não foi possível reproduzir esta música.";
+      status.textContent = "Não foi possível reproduzir.";
     });
   } else {
     audio.pause();
@@ -425,6 +408,7 @@ playBtn.addEventListener("click", () => {
 
 audio.addEventListener("play", () => {
   playBtn.textContent = "Ⅱ";
+  status.textContent = "Reproduzindo agora";
 });
 
 audio.addEventListener("pause", () => {
@@ -448,40 +432,71 @@ previousBtn.addEventListener("click", () => {
   playSong(previousIndex);
 });
 
-audio.addEventListener("ended", () => {
-  playNext();
-});
+audio.addEventListener("ended", playNext);
 
 muteBtn.addEventListener("click", () => {
   audio.muted = !audio.muted;
   muteBtn.textContent = audio.muted ? "🔇" : "🔊";
 });
 
-sleepTimer.addEventListener("change", () => {
-  clearTimeout(timer);
-  timer = null;
+// Abrir e fechar o menu
+menuBtn.addEventListener("click", (event) => {
+  event.stopPropagation();
+  menu.classList.toggle("show");
+});
 
-  const minutes = Number(sleepTimer.value);
+document.addEventListener("click", (event) => {
+  if (!event.target.closest(".menu-area")) {
+    menu.classList.remove("show");
+    timerOptions.classList.remove("show");
+  }
+});
 
-  if (minutes === 0) {
-    status.textContent = "Temporizador desativado.";
-    return;
+// Tocar a seguir: adiciona a música atual à fila escondida
+playNextBtn.addEventListener("click", () => {
+  if (currentIndex === -1) {
+    status.textContent = "Escolha uma música primeiro.";
+  } else {
+    queue.push(currentIndex);
+    status.textContent = "Música adicionada para tocar a seguir!";
   }
 
-  status.textContent =
-    `A música vai parar em ${minutes} minutos.`;
+  menu.classList.remove("show");
+});
 
-  timer = setTimeout(() => {
-    audio.pause();
-    sleepTimer.value = "0";
-    status.textContent =
-      "Temporizador finalizado. Música pausada.";
+// Abrir opções do temporizador
+timerBtn.addEventListener("click", () => {
+  timerOptions.classList.toggle("show");
+});
+
+// Configurar temporizador
+timerOptions.querySelectorAll("button").forEach(button => {
+  button.addEventListener("click", () => {
+    clearTimeout(timer);
     timer = null;
-  }, minutes * 60 * 1000);
+
+    const minutes = Number(button.dataset.minutes);
+
+    if (minutes === 0) {
+      status.textContent = "Temporizador desativado.";
+    } else {
+      status.textContent =
+        `A música vai parar em ${minutes} minutos.`;
+
+      timer = setTimeout(() => {
+        audio.pause();
+        status.textContent =
+          "Temporizador finalizado. Música pausada.";
+        timer = null;
+      }, minutes * 60 * 1000);
+    }
+
+    menu.classList.remove("show");
+    timerOptions.classList.remove("show");
+  });
 });
 
 renderPlaylist();
-renderQueue();
 </script>
 
 </body>
